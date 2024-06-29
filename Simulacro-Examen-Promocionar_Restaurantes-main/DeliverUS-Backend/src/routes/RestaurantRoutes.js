@@ -19,6 +19,7 @@ const loadFileRoutes = function (app) {
       handleFilesUpload(['logo', 'heroImage'], process.env.RESTAURANTS_FOLDER),
       RestaurantValidation.create,
       handleValidation,
+      RestaurantMiddleware.checkRestaurantPromoted,
       RestaurantController.create)
 
   app.route('/restaurants/:restaurantId')
@@ -33,6 +34,7 @@ const loadFileRoutes = function (app) {
       handleFilesUpload(['logo', 'heroImage'], process.env.RESTAURANTS_FOLDER),
       RestaurantValidation.update,
       handleValidation,
+      RestaurantMiddleware.checkRestaurantPromoted,
       RestaurantController.update)
     .delete(
       isLoggedIn,
@@ -62,5 +64,14 @@ const loadFileRoutes = function (app) {
       checkEntityExists(Restaurant, 'restaurantId'),
       RestaurantMiddleware.checkRestaurantOwnership,
       OrderController.analytics)
+
+  app.route('/restaurants/:restaurantId/promoted')
+    .patch(
+      isLoggedIn,
+      hasRole('owner'),
+      checkEntityExists(Restaurant, 'restaurantId'),
+      RestaurantMiddleware.checkRestaurantOwnership,
+      RestaurantController.promote
+    )
 }
 export default loadFileRoutes
